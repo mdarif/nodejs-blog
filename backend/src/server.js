@@ -1,5 +1,5 @@
 import express from 'express';
-import { MongoClient } from 'mongodb';
+import { db, connectToDb } from './db.js';
 
 // in memory database
 /* let articlesInfo = [
@@ -29,13 +29,6 @@ app.get('/api/articles/:name', async (req, res) => {
   // get the value of URL param
   const { name } = req.params;
 
-  // connect to mongoDB
-  const client = new MongoClient('mongodb://127.0.0.1:27017');
-  await client.connect();
-
-  // gives back the reference of the DB
-  const db = client.db('react-blog-db');
-
   // query to load the article
   /**
    * db.collection.findOne()
@@ -50,13 +43,25 @@ app.get('/api/articles/:name', async (req, res) => {
   }
 });
 
-app.put('/api/articles/:name/upvote', (req, res) => {
-  console.log('req.params', req.params);
+app.put('/api/articles/:name/upvote', async (req, res) => {
   const { name } = req.params;
 
-  const article = articlesInfo.find((info) => info.name === name);
+  // const article = articlesInfo.find((info) => info.name === name);
+
+  await db.collection('articles').updateOne(
+    { name },
+    {
+      $inc: {
+        upvotes: 1,
+      },
+    }
+  );
+
+  // query to load the article
+  const article = await db.collection('articles').findOne({ name });
+
   if (article) {
-    article.upvotes += 1;
+    // article.upvotes += 1;
     res.send(`The ${name} article now has ${article.upvotes} upvote(s)`);
   } else {
     res.send("That article doesn't exist");
@@ -75,21 +80,34 @@ app.put('/api/articles/:name/upvote', (req, res) => {
 //   res.send(`Hello ${req.body.name}`);
 // });
 
-app.post('/api/articles/:name/comments', (req, res) => {
+app.post('/api/articles/:name/comments', async (req, res) => {
   console.log(req.body, req.params);
   const { name } = req.params;
   const { postedBy, text } = req.body;
 
-  const article = articlesInfo.find((a) => a.name === name);
+  // const article = articlesInfo.find((a) => a.name === name);
+
+  await db.collection('articles').updateOne(
+    { name },
+    {
+      $push: { comments: { postedBy, text } },
+    }
+  );
+
+  // load the updated articles
+  const article = await db.collection('articles').findOne({ name });
 
   if (article) {
-    article.comments.push({ postedBy, text });
+    // article.comments.push({ postedBy, text });
     res.send(article.comments);
   } else {
     res.send("This article doesn't exist!");
   }
 });
 
-app.listen(8000, () => {
-  console.log('Server is listening on port 8000', (req, res) => {});
+connectToDb(() => {
+  console.log('Successfully connected to DB!');
+  app.listen(8000, () => {
+    console.log('Server is listening on port 8000', (req, res) => {});
+  });
 });
