@@ -1,7 +1,8 @@
 import express from 'express';
+import { MongoClient } from 'mongodb';
 
 // in memory database
-let articlesInfo = [
+/* let articlesInfo = [
   {
     name: 'learn-react',
     upvotes: 0,
@@ -17,12 +18,37 @@ let articlesInfo = [
     upvotes: 0,
     comments: [],
   },
-];
+]; */
 
 const app = express();
 
 //middleware
 app.use(express.json());
+
+app.get('/api/articles/:name', async (req, res) => {
+  // get the value of URL param
+  const { name } = req.params;
+
+  // connect to mongoDB
+  const client = new MongoClient('mongodb://127.0.0.1:27017');
+  await client.connect();
+
+  // gives back the reference of the DB
+  const db = client.db('react-blog-db');
+
+  // query to load the article
+  /**
+   * db.collection.findOne()
+   */
+  const article = await db.collection('articles').findOne({ name });
+
+  if (article) {
+    // send it back to the client
+    res.json(article);
+  } else {
+    res.sendStatus(404);
+  }
+});
 
 app.put('/api/articles/:name/upvote', (req, res) => {
   console.log('req.params', req.params);
