@@ -30,9 +30,6 @@ app.get('/api/articles/:name', async (req, res) => {
   const { name } = req.params;
 
   // query to load the article
-  /**
-   * db.collection.findOne()
-   */
   const article = await db.collection('articles').findOne({ name });
 
   if (article) {
@@ -62,7 +59,7 @@ app.put('/api/articles/:name/upvote', async (req, res) => {
 
   if (article) {
     // article.upvotes += 1;
-    res.send(`The ${name} article now has ${article.upvotes} upvote(s)`);
+    res.json(article);
   } else {
     res.send("That article doesn't exist");
   }
@@ -99,7 +96,7 @@ app.post('/api/articles/:name/comments', async (req, res) => {
 
   if (article) {
     // article.comments.push({ postedBy, text });
-    res.send(article.comments);
+    res.json(article);
   } else {
     res.send("This article doesn't exist!");
   }
