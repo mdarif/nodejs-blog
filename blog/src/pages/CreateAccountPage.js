@@ -12,11 +12,13 @@ const CreateAccountPage = () => {
 
   const createAccount = async () => {
     try {
+      // If the password and confirm password don't match, throw an error
       if (password !== confirmPassword) {
         setError('Password and confirm password do not match!');
-        return;
+        return; // return early
       }
 
+      // If password and confirm password match, create account
       await createUserWithEmailAndPassword(getAuth(), email, password);
       navigate('/articles');
     } catch (err) {

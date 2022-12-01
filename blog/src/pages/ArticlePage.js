@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import articles from './article-content';
 import NotFoundPage from './NotFoundPage';
-import axios from 'axios';
 import CommentsList from '../components/CommentsList';
 import AddCommentForm from '../components/AddCommentForm';
 import useUser from '../hooks/useUser';
+import axios from 'axios';
 
 const ArticlePage = () => {
   const [articleInfo, setArticleInfo] = useState({
@@ -17,16 +17,22 @@ const ArticlePage = () => {
   const { articleId } = useParams();
   const { user, isLoading } = useUser();
 
+  console.log('ArticlePage user', user);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const loadArticleInfo = async () => {
+      console.log('user', user);
       const token = user && (await user.getIdToken());
+      console.log('token', token);
       const headers = token ? { authToken: token } : {};
+      console.log('headers>>>', headers);
       const response = await axios.get(`/api/articles/${articleId}`, {
         headers,
       });
       const updatedArticleInfo = response.data;
+      console.log('updatedArticleInfo', updatedArticleInfo);
       setArticleInfo(updatedArticleInfo);
     };
     if (isLoading) loadArticleInfo();
@@ -45,6 +51,7 @@ const ArticlePage = () => {
       }
     );
     const updatedArticle = response.data;
+    console.log('updatedArticle', updatedArticle);
     setArticleInfo(updatedArticle);
   };
 
@@ -54,7 +61,7 @@ const ArticlePage = () => {
 
   return (
     <>
-      {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}
+      <pre>{JSON.stringify(user, null, 2)}</pre>
       <h1>{article.title}</h1>
       <div className='upvotes-section'>
         {user ? (

@@ -40,7 +40,6 @@ const AddCommentForm = ({ articleName, onArticleUpdated }) => {
             onChange={(e) => setName(e.target.value)}
           />
         </label> */}
-        Comment:
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
