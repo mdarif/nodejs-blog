@@ -68,7 +68,7 @@ const ArticlePage = () => {
 
   return (
     <>
-      <pre>{JSON.stringify(user, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}
       <h1>{article.title}</h1>
       <div className='upvotes-section'>
         {user ? (
@@ -89,7 +89,9 @@ const ArticlePage = () => {
           onArticleUpdated={(updatedArticle) => setArticleInfo(updatedArticle)}
         />
       ) : (
-        <button>Log in to add a comment</button>
+        <button onClick={() => navigate('/login')}>
+          Log in to add a comment
+        </button>
       )}
       <CommentsList comments={articleInfo.comments} />
     </>

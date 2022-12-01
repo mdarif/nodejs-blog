@@ -42,9 +42,8 @@ const LoginPage = () => {
           onChange={(e) => setPassword(e.target.value)}
           type='password'
         />
-        <button>Log In</button>
+        <button>Log In</button> <Link to='/create-account'>Sign Up</Link>
       </form>
-      <Link to='/create-account'>Sign Up</Link>
     </>
   );
 };
