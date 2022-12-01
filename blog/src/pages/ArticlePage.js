@@ -43,7 +43,7 @@ const ArticlePage = () => {
       const updatedArticleInfo = response.data;
       setArticleInfo(updatedArticleInfo);
     };
-    if (isLoading) loadArticleInfo();
+    if (!isLoading) loadArticleInfo();
   }, [isLoading, user]);
 
   const article = articles.find((article) => article.name === articleId);

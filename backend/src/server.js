@@ -2,6 +2,14 @@ import fs from 'fs';
 import admin from 'firebase-admin';
 import express from 'express';
 import { db, connectToDb } from './db.js';
+import path from 'path';
+import 'dotenv/config';
+
+// fileURLToPath is a Node.js API
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Firebase Admin SDK
@@ -32,6 +40,14 @@ const app = express();
 
 // Global middleware to parse application/json
 app.use(express.json());
+
+// Global middleware to parse application/x-www-form-urlencoded
+app.use(express.static(path.join(__dirname, '../build')));
+
+// If routes (api endpoints) are not found return index.html
+app.get(/^(?!\/api).+/, (req, res) => {
+  res.sendFile(path.join(__dirname, '../build/index.html'));
+});
 
 // express middleware to automatically load User information whenever we receive a request
 app.use(async (req, res, next) => {
@@ -146,9 +162,11 @@ app.post('/api/articles/:name/comments', async (req, res) => {
   }
 });
 
+const PORT = process.env.PORT || 8000;
+
 connectToDb(() => {
   console.log('Successfully connected to DB!');
-  app.listen(8000, () => {
-    console.log('Server is listening on port 8000', (req, res) => {});
+  app.listen(PORT, () => {
+    console.log(`Server is listening on port ${PORT}`);
   });
 });
