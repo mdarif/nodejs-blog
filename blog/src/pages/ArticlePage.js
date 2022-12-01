@@ -17,22 +17,30 @@ const ArticlePage = () => {
   const { articleId } = useParams();
   const { user, isLoading } = useUser();
 
-  console.log('ArticlePage user', user);
-
   const navigate = useNavigate();
 
   useEffect(() => {
     const loadArticleInfo = async () => {
-      console.log('user', user);
+      /**
+       * getIdToken ( forceRefresh ? :  boolean ) : Promise < string >
+       *
+       * Returns a JSON Web Token (JWT) used to identify the user to a
+       * Firebase service.
+       *
+       * Returns the current token if it has not expired. Otherwise,
+       * this will refresh the token and return a new one.
+       */
       const token = user && (await user.getIdToken());
-      console.log('token', token);
+
+      // If token exists than send it to the server as 'authToken' key
+      // in the Axios 'headers'
       const headers = token ? { authToken: token } : {};
-      console.log('headers>>>', headers);
+
       const response = await axios.get(`/api/articles/${articleId}`, {
+        // `headers` are custom headers to be sent
         headers,
       });
       const updatedArticleInfo = response.data;
-      console.log('updatedArticleInfo', updatedArticleInfo);
       setArticleInfo(updatedArticleInfo);
     };
     if (isLoading) loadArticleInfo();
@@ -45,13 +53,12 @@ const ArticlePage = () => {
     const headers = token ? { authToken: token } : {};
     const response = await axios.put(
       `/api/articles/${articleId}/upvote`,
-      null,
+      null, // request body
       {
-        headers,
+        headers, // `headers` are custom headers to be sent
       }
     );
     const updatedArticle = response.data;
-    console.log('updatedArticle', updatedArticle);
     setArticleInfo(updatedArticle);
   };
 

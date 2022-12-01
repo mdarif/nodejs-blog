@@ -27,7 +27,7 @@ const useUser = () => {
      * successfully signs in, you can get information about the user in the observer.
      */
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log('user in useUser', user);
+      // console.log('user in useUser', user);
       setUser(user);
       setIsLoading(false);
     });
